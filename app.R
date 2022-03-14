@@ -6,13 +6,10 @@ ui <- bootstrapPage(
   tags$style(type = "text/css", "html, body {width:100%;height:100%}"),
   leafletOutput("map", width = "100%", height = "100%"),
   absolutePanel(top = 10, right = 10,
-                sliderInput("range", "Magnitudes", min(quakes$mag), max(quakes$mag),
-                            value = range(quakes$mag), step = 0.1
+                sliderInput("range", "Taille carreaux (m)", 200, 10000,
+                            value = 10000, step = c(200,1000,5000,10000)
                 ),
-                selectInput("colors", "Color Scheme",
-                            rownames(subset(brewer.pal.info, category %in% c("seq", "div")))
-                ),
-                checkboxInput("legend", "Show legend", TRUE)
+                checkboxInput("legend", "Légende", TRUE)
   )
 )
 
@@ -20,7 +17,7 @@ server <- function(input, output, session) {
   
   # Reactive expression for the data subsetted to what the user selected
   filteredData <- reactive({
-    quakes[quakes$mag >= input$range[1] & quakes$mag <= input$range[2],]
+    quakes[quakes$mag >= 4 & quakes$mag <= 6,]
   })
   
   # This reactive expression represents the palette function,
@@ -52,19 +49,11 @@ server <- function(input, output, session) {
   })
   
   # Use a separate observer to recreate the legend as needed.
-  observe({
-    proxy <- leafletProxy("map", data = quakes)
-    
-    # Remove any existing legend, and only if the legend is
-    # enabled, create a new one.
-    proxy %>% clearControls()
-    if (input$legend) {
-      pal <- colorpal()
-      proxy %>% addLegend(position = "bottomright",
-                          pal = pal, values = ~mag
-      )
-    }
-  })
+  proxy <- leafletProxy("map", data = quakes) %>% addLegend(position = "bottomright",
+                                                            pal = "YlGn", values = ~mag
+   
+  proxy 
+  )
 }
 
 shinyApp(ui, server)

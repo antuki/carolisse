@@ -6,7 +6,7 @@ library(dplyr)
 library(stringr)
 library(leaflet)
 library(RColorBrewer)
-df <- data.table::fread("C:/Users/HVOSQM/Downloads/Filosofi2015_carreaux_200m_metropole.csv")
+df <- data.table::fread("https://minio.lab.sspcloud.fr/kantunez/filo/Filosofi2015_carreaux_200m_metropole_small.csv")
 df$y <- as.integer(str_sub(str_extract(df$IdINSPIRE, "N\\d+"), 2))
 df$x <- as.integer(str_sub(str_extract(df$IdINSPIRE, "E\\d+"), 2))
 
@@ -27,9 +27,8 @@ carroyage <- function(df, iCellSize=10000, var="Men", epsg="3035"){
 toto <- carroyage(df)
 
 mapviewOptions(
-  #platform = "leafgl"
   platform = "leaflet"
-  , viewer.suppress = FALSE
+  , viewer.suppress = TRUE
 )
 
 mapview(

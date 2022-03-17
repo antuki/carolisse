@@ -19,6 +19,7 @@ ui <- bootstrapPage(
                   inputId = "range",
                   label = "Taille carreaux (m)", 
                   choices = c(200, 500, 1000, 2000, 10000),
+                  selected = 10000,
                   grid = FALSE
                 ),
                 
@@ -81,7 +82,7 @@ server <- function(input, output, session) {
      st_as_sf(coords = c("lon", "lat"), crs = 4326) %>%
      st_transform(3035) %>% st_bbox()
    df2 <- df[df$x >= bbox_new[[1]] & df$x <= bbox_new[[3]] & df$y >= bbox_new[[2]] & df$y <= bbox_new[[4]], ]
-   toto <- carroyage(df2)   
+   toto <- carroyage(df2, iCellSize=input$range)   
 
    })
   
